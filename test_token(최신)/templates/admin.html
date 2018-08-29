@@ -7,13 +7,17 @@
   <title>Document</title>
 </head>
 <body>
+
+  <!-- logout -->
   <form action="/logout">
   <input type="submit" name='logout' value='logout'>
   </form>
+
+  <!-- 현재 블록 수 및 total supply -->
 <p>현재 블록 수 {{ now_block_number }}</p>
 <p>1. total Supply : {{totalSupply}}</p>
 
-
+<!-- 유저 잔고 확인 -->
 <form method='POST'>
 <p>2. 유저의 잔고 확인</p>
 유저 명 : <input type="text" list="user_name" name='user_name_balance'>
@@ -26,7 +30,7 @@
 {{ show_token }}
 </form>
 
-
+<!-- 토큰 전송 -->
 <form method='POST'>
 <p>3. 토큰 전송 </p>
 유저 명 : <input type="text" list="user_name" name='user_name_transfer'>
