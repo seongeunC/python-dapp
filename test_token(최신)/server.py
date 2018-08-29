@@ -2,8 +2,10 @@ import os
 from flask import Flask, request, redirect, url_for, send_from_directory
 from flask import render_template,flash,session
 from werkzeug.utils import secure_filename
+from time import time
 from dapp_token import *
 import pymysql
+import pprint
 
 
 UPLOAD_FOLDER = 'uploads'
@@ -20,11 +22,26 @@ eun = mytoken('MyBasicToken.sol','MyBasicToken')
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
+'''
+def use_mysql(query,value):
+    conn = pymysql.connect(host='localhost', user='root',passwd='qwer1234',db='mydapp',charset='utf8')
+    cursor = conn.cursor()
+    query = query
+    value = value
+'''
 
 ## main page
 @app.route('/', methods=['GET','POST'])
 def index():
+    conn = pymysql.connect(host='localhost', user='root',passwd='qwer1234',db='mydapp',charset='utf8')
+    cursor = conn.cursor()
+    query = 'SELECT name,title,path,lyrics,created FROM data_table'
+    cursor.execute(query)
+    content_data = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    num_content=len(content_data)
+
     path_dir ='./uploads'
     music_list = os.listdir(path_dir)
     show_token = eun.show_token(w3.eth.accounts[0])
@@ -56,14 +73,11 @@ def index():
                 eun.send_token(w3.eth.accounts[0],addr_transfer,amount_transfer)
 
             totalSupply = eun.show_total_token()
-            return render_template('admin.html',totalSupply=totalSupply,user_list=user_list,show_token=show_token,now_block_number =now_block_number)#
-
-        return render_template('user.html',music_list=music_list, user_name = user_name,user_wallet=user_wallet,show_token=show_token)
-
-
+            return render_template('admin.html',totalSupply=totalSupply,user_list=user_list,show_token=show_token,now_block_number=now_block_number)#
+        return render_template('user.html',music_list=music_list,user_name = user_name,user_wallet=user_wallet,show_token=show_token,content_data=content_data,num_content=num_content)
     # login x
     else:
-        return render_template('index.html',music_list= music_list)
+        return render_template('index.html',music_list= music_list,content_data=content_data)
 
 
 # logout page
@@ -124,8 +138,6 @@ def sign_up():
             cursor.execute(query,value)
             data = cursor.fetchall()
 
-
-
             if not data:
                 conn.commit()
             else:
@@ -152,10 +164,26 @@ def upload_file():
         if file.filename == '':
             print('no filename')
             return redirect(request.url)
+
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
+            name = session['user']
+            filename = name+'_'+str(round(time.time()))+'_'+secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            path = os.path.abspath(filename)
+            title = request.form['title']
+            lyrics = request.form['lyrics']
+            conn = pymysql.connect(host='localhost',user='root', passwd='qwer1234', db='mydapp',charset='utf8')
+            cursor = conn.cursor()
+            query = 'INSERT INTO data_table (name,title,lyrics,path,created) values(%s,%s,%s,%s,NOW())'
+            value = (name,title,lyrics,path)
+            cursor.execute(query,value)
+            data = cursor.fetchall()
+            if not data:
+                conn.commit()
+            else:
+                conn.rollback()
             return redirect(url_for('index'))
+
     return render_template('upload.html')
 
 

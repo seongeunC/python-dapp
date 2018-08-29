@@ -9,11 +9,9 @@
 <body>
 
   <!-- login 버튼 -->
-
   <form action="http://localhost:5000/login">
     <input type="submit" name="login" value="login">
   </form>
-
   <!-- sign up 버튼 -->
   <form action="http://localhost:5000/signup">
     <input type="submit" name="signup" value="signup">
@@ -22,17 +20,16 @@
   <form action="http://localhost:5000/upload">
     <input type="submit" name='upload' value="upload">
   </form>
-
   <hr>
   <hr>
 
   <!-- upload 시 출력 되는 화면 -->
-  {% for list in music_list %}
+
   <li>
-    {{list}}
+      {% for list in music_list %}
     <audio src="./uploads/{{list}}" type="file/mp3" controls></audio>
+     {%endfor %}
   </li>
-  {% endfor %}
-  
+
 </body>
 </html>

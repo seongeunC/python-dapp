@@ -17,8 +17,6 @@
   <h3>현재 잔고 {{show_token}}</h3>
 
   <hr>
-
-
     <!-- logout form -->
     <form action="/logout">
     <input type="submit" name='logout' value='logout'>
@@ -28,17 +26,20 @@
     <form action="http://localhost:5000/upload">
       <input type="submit" name='upload' value="upload">
     </form>
+<hr>
 
-
-<!-- upload 한 정보 출력 -->
-  <hr>
-  {% for list in music_list %}
-  <li>
-    {{list}}
-    <audio controls>
-      <source src='./uploads/{{list}}' type='audio/mp3'>
-    </audio>
-  </li>
+<table border=1>
+  <!-- lyrics를 클릭하게 되면 modal box 생성 후 가사 출력하게 하자-->
+  <caption>Music List</caption>
+  <thead><tr><th>Singer</th><th>title</th><th>song</th><th>lyrics</th><th>created</th><th>love it</th></tr></thead>
+  {% for i in range(num_content) %}
+  <tbody><tr><td>{{content_data[i][0]}}</td><td>{{content_data[i][1]}}</td><td><audio src={{content_data[i][2]}}type="file/mp3" controls></audio></td><td>{{content_data[i][3]}}</td><td>{{content_data[i][4]}}</td></tr></tbody>
   {% endfor %}
+</table>
+
+
+  <hr>
+
+
 </body>
 </html>
