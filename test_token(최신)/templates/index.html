@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <form action="http://localhost:5000/login">
+    <input type="submit" name="login" value="login">
+  </form>
+  <form action="http://localhost:5000/signup">
+    <input type="submit" name="signup" value="signup">
+  </form>
+  <form action="http://localhost:5000/upload">
+    <input type="submit" name='upload' value="upload">
+  </form>
+  <hr>
+  <hr>
+  {% for list in music_list %}
+  <li>
+    {{list}}
+    <audio src="./uploads/{{list}}" type="file/mp3" controls></audio>
+  </li>
+  {% endfor %}
+</body>
+</html>

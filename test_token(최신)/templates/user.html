@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <h1>{{user_name}} 님 안녕하세요</h1>
+
+  <h2>지갑 주소 {{user_wallet}}</h2>
+  <h3>현재 잔고 {{show_token}}</h3>
+
+  <hr>
+
+  <div>
+    <form action="/logout">
+    <input type="submit" name='logout' value='logout'>
+    </form>
+  </div>
+
+  <div>
+    <form action="http://localhost:5000/upload">
+      <input type="submit" name='upload' value="upload">
+    </form>
+  </div>
+
+
+  <hr>
+  {% for list in music_list %}
+  <li>
+    {{list}}
+    <audio controls>
+      <source src='./uploads/{{list}}' type='audio/mp3'>
+    </audio>
+  </li>
+  {% endfor %}
+</body>
+</html>
