@@ -29,35 +29,29 @@ def allowed_file(filename):
 def index():
     conn = pymysql.connect(host='localhost', user='root',passwd='qwer1234',db='mydapp',charset='utf8')
     cursor = conn.cursor()
-    query = 'SELECT name,title,path,lyrics,created,loveit FROM data_table'
+    query = 'SELECT name,title,path,lyrics,created,loveit,id FROM data_table order by id desc'
     cursor.execute(query)
     content_data = cursor.fetchall()
-    cursor.close()
-    conn.close()
     num_content=len(content_data)
 
-    path_dir ='./uploads'
-    music_list = os.listdir(path_dir)
-    show_token = eun.show_token(w3.eth.accounts[0])
     # login o
     if session:
         user_name = session['user']
-        conn = pymysql.connect(host='localhost', user='root',passwd='qwer1234',db='mydapp',charset='utf8')
-        cursor = conn.cursor()
         query = 'SELECT wallet FROM user_table WHERE name = %s'
         value = (user_name)
         cursor.execute(query,value)
         user_wallet = (cursor.fetchall())
-        cursor.close()
-        conn.close()
         user_wallet = user_wallet[0][0]
         show_token = eun.show_token(user_wallet)
-
+        reward_list =[]
+        if request.method == 'POST' and 'favorNum' in request.form:
+            query = "update data_table set loveit = loveit + 1 where id = '" + request.form['favorNum'] + "'"
+            cursor.execute(query)
+            conn.commit()
         # admin login
         if user_name == 'admin':
             user_list = w3.eth.accounts
             now_block_number = w3.eth.blockNumber
-
             if request.method == 'POST' and 'user_name_balance' in request.form:
                 addr_balance =  request.form['user_name_balance']
                 show_token = eun.show_token(addr_balance)
@@ -65,13 +59,49 @@ def index():
                 addr_transfer = request.form['user_name_transfer']
                 amount_transfer = int(request.form['amount'])
                 eun.send_token(w3.eth.accounts[0],addr_transfer,amount_transfer)
+            if request.method == 'POST' and 'reward' in request.form:
+                query = 'SELECT name FROM user_table'
+                cursor.execute(query)
+                data = cursor.fetchall()
+                num_data = len(data)
+
+                user_list =[]
+                for num in range(num_data):
+                    user_name = data[num][0]
+
+                    query = "SELECT loveit From data_table WHERE name=%s"
+                    value = (user_name)
+                    cursor.execute('set names utf8')
+                    cursor.execute(query,value)
+                    score = sum(int(x[0]) for x in cursor.fetchall())
+
+                    query = "SELECT wallet From user_table WHERE name=%s"
+                    value = (user_name)
+                    cursor.execute(query,value)
+                    user_wallet = cursor.fetchall()[0][0]
+                
+                    amount = score * 1000
+                    eun.send_token(w3.eth.accounts[0],user_wallet,amount)
+                    if user_name == 'admin':
+                        continue
+                    else:
+                        reward_list.append(user_name+'-'+str(amount))
+                query = 'update data_table set loveit = 0'
+                cursor.execute(query)
+                conn.commit()
+
+
 
             totalSupply = eun.show_total_token()
-            return render_template('admin.html',totalSupply=totalSupply,user_list=user_list,show_token=show_token,now_block_number=now_block_number)#
-        return render_template('user.html',music_list=music_list,user_name = user_name,user_wallet=user_wallet,show_token=show_token,content_data=content_data,num_content=num_content)
+            show_token = eun.show_token(w3.eth.accounts[0])
+            return render_template('admin.html',totalSupply=totalSupply,user_list=user_list,show_token=show_token,now_block_number=now_block_number,user_wallet=user_wallet,reward_list=reward_list)
+        return render_template('user.html',user_name = user_name,user_wallet=user_wallet,show_token=show_token,content_data=content_data,num_content=num_content)
     # login x
     else:
-        return render_template('index.html',music_list= music_list,content_data=content_data,num_content=num_content)
+        return render_template('index.html',content_data=content_data,num_content=num_content)
+
+    cursor.close()
+    conn.close()
 
 
 # logout page

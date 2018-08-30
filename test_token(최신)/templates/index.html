@@ -8,7 +8,11 @@
   <title>Music Contents Platform</title>
   <link href="{{url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet">
 </head>
-
+<style>
+body div table { border : 1px solid blue; border-collapse :collapse;}
+  body div table tr td {text-align: center;}
+  body div table thead tr th {text-align: center; width:100px; height:20px;}
+</style>
 <body>
   <div class="container">
     <div class="jumbotron text-center">
@@ -58,7 +62,7 @@
             <td>{{content_data[i][3]}}</td>
             <td>{{content_data[i][4]}}</td>
             <td>{{content_data[i][5]}}</td>
-            <td><input type="submit" name='좋아요'></td>
+            <td><span><img style='width:24px; height:24px'src="{{url_for('static',filename='loveit.png')}}"></span></td>
           </tr>
         </tbody>
         {% endfor %}

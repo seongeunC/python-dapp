@@ -8,6 +8,17 @@
   <title>Music Contents Platform</title>
   <link href="{{url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet">
 </head>
+<script>
+  function gogosing(favor_id){
+    document.form01.favorNum.value = favor_id;
+    document.form01.submit();
+  }
+</script>
+<style>
+body div table { border : 1px solid blue; border-collapse :collapse;}
+  body div table tr td {text-align: center;}
+  body div table thead tr th {text-align: center;}
+</style>
 <body>
   <div class="container">
     <div class="jumbotron text-center">
@@ -66,12 +77,15 @@
             <td>{{content_data[i][3]}}</td>
             <td>{{content_data[i][4]}}</td>
             <td>{{content_data[i][5]}}</td>
-            <td><input type="submit" name='좋아요' value='좋아요'></td>
+            <td><span style='cursor:pointer;' onclick='gogosing({{content_data[i][6]}})'><img style='width:24px; height:24px'src="{{url_for('static',filename='loveit.png')}}"></span></td>
           </tr>
         </tbody>
         {% endfor %}
       </table>
     </div>
+    <form name='form01' action='' method="post">
+      <input type='hidden' name='favorNum' value=''>
+    </form>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>

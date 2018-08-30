@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Music Contents Platform</title>
 
-  <link href="{{url_for('.static',filename='bootstrap.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet">
 
 
 </head>
@@ -29,22 +29,19 @@
   <!-- 현재 블록 수 및 total supply -->
   <p>현재 블록 수 {{ now_block_number }}</p>
   <p>1. total Supply : {{totalSupply}}</p>
-
+  <br>
   <!-- 유저 잔고 확인 -->
   <form method='POST'>
   <p>2. 유저의 잔고 확인</p>
   유저 명 : <input type="text" list="user_name" name='user_name_balance'>
-  <div>
   <datalist id = 'user_name'>
   {% for user in user_list %}
   <option value={{user}}></option>
   {% endfor %}
   </datalist>
-  </div>
-  <input type="submit" value="확인">
-  {{ show_token }}
+  <input type="submit" value="확인">  {{ show_token }}
   </form>
-
+  <br>
   <!-- 토큰 전송 -->
   <form method='POST'>
   <p>3. 토큰 전송 </p>
@@ -57,12 +54,25 @@
   <input type="text" name="amount">
   <input type="submit" value="확인">
   </form>
+  <br>
+
+  <!-- 산출 보상 -->
+  <form method='POST'>
+  <p>4. 보상 주기</p>
+  보상 : <input type='submit' name='reward' value='reward'>
+  </form>
+
+  <table>
+    <tr><td>유저명-보상 토큰</td></tr>
+    {% for list in reward_list %}
+    <tr><td>{{list}}</td></tr>
+    {% endfor %}
+  </table>
 
 </div>
-{% block scripts %}
-  <script src="{{url_for('.static',filename='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js')}}"></script>
-      <script src="{{url_for('.static',filename='../js/bootstrap.min.js')}}"></script>
-{{ super()}}
-{% endblock %}
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+      <script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
+
 </body>
 </html>
