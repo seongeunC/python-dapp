@@ -1,24 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Music Contents Platform</title>
+  <link href="{{url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet">
 </head>
+
+
 <body>
 
-  <!-- upload form -->
-  <h1> File Upload</h1>
-<hr>
-  <form action='' method="POST" enctype="multipart/form-data">
-    <p>title:<input type="text" name='title'>
-    <p>lyrics:  </p>
-      <textarea name="lyrics" id="lyrics" cols="30" rows="10"></textarea>
-    <p>file:<input type="file" name="file">
-    <p>   <input type="submit" value="upload">
-  </form>
 
+  <div class="container">
+    <div class="jumbotron text-center">
+      <h1 style="font-size:50px;">Music Contents Platform</h1><br>
+      <p style="
+  margin-bottom: 20px;">
 
+Please upload your music file below..<br></p>
+    </div>
+
+    <!--0.로그아웃 버튼-->
+
+    <form action="/logout">
+      <input type="submit" name="logout" value="Logout" class="btn btn-default" style="float:right">
+    </form><br><br>
+
+    <!--1.회원정보창 오른쪽-->
+    <ul class="list-group" style="float:right;">
+      <li class="list-group-item">{{user_name}}님 안녕하세요!</li>
+      <li class="list-group-item">Address : {{user_wallet}}</li>
+      <li class="list-group-item">Balance : {{show_token}}</li>
+    </ul>
+
+    <!--2.파일 업로드창-->
+
+    <form action='' method="POST" enctype="multipart/form-data">
+        <p>title: <input type="text" name='title'>
+        <p>lyrics:  </p>
+          <textarea name="lyrics" id="lyrics" cols="30" rows="10"></textarea>
+        <p>file:<input type="file" name="file">
+    <input class="btn btn-default" type="submit" value="upload">
+    </form>
+
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
 </body>
 </html>

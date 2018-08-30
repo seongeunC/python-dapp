@@ -1,35 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Music Contents Platform</title>
+  <link href="{{url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet">
 </head>
+
 <body>
+  <div class="container">
+    <div class="jumbotron text-center">
+      <h1 style="font-size:50px;">Music Contents Platform</h1><br>
+      <p style="
+  margin-bottom: 20px;">Be rewarded with your voice.<br></p>
+    </div>
+    <!-- 0. login 버튼 -->
+    <form action="/login">
+      <input type="submit" name="login" value="login" class="btn btn-default" style="float:right">
+    </form>
 
-  <!-- login 버튼 -->
-  <form action="http://localhost:5000/login">
-    <input type="submit" name="login" value="login">
-  </form>
-  <!-- sign up 버튼 -->
-  <form action="http://localhost:5000/signup">
-    <input type="submit" name="signup" value="signup">
-  </form>
-  <!-- upload 버튼 -->
-  <form action="http://localhost:5000/upload">
-    <input type="submit" name='upload' value="upload">
-  </form>
-  <hr>
-  <hr>
+    <!-- 1. sign up 버튼 -->
+    <form action="/signup">
+      <input type="submit" name="signup" value="sign up" class="btn btn-default" style="float:right">
+    </form>
+    <br><br>
 
-  <!-- upload 시 출력 되는 화면 -->
+    <!-- 여기 부터 동일 -->
 
-  <li>
-      {% for list in music_list %}
-    <audio src="./uploads/{{list}}" type="file/mp3" controls></audio>
-     {%endfor %}
-  </li>
+    <br><br>
+    <br><br>
+    <hr>
+    <br><br>
+    <!-- 2. 파일 출력화면-->
+    <div>
+      <table border=1>
+        <!-- lyrics를 클릭하게 되면 modal box 생성 후 가사 출력하게 하자-->
+        <caption>Music List</caption>
+        <thead>
+          <tr>
+            <th>Singer</th>
+            <th>title</th>
+            <th>song</th>
+            <th>lyrics</th>
+            <th>created</th>
+            <th>love it</th>
+            <th>좋아요!</th>
+          </tr>
+        </thead>
+        {% for i in range(num_content) %}
+        <tbody>
+          <tr>
+            <td>{{content_data[i][0]}}</td>
+            <td>{{content_data[i][1]}}</td>
+            <td><audio src={{content_data[i][2]}}type="file/mp3" controls></audio></td>
+            <td>{{content_data[i][3]}}</td>
+            <td>{{content_data[i][4]}}</td>
+            <td>{{content_data[i][5]}}</td>
+            <td><input type="submit" name='좋아요'></td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+
+    </div>
+
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
 
 </body>
+
 </html>

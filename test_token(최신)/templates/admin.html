@@ -1,47 +1,68 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-</head>
-<body>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Music Contents Platform</title>
 
-  <!-- logout -->
+  <link href="{{url_for('.static',filename='bootstrap.min.css')}}" rel="stylesheet">
+
+
+</head>
+
+
+<body>
+  <div class="container">
+    <div class="jumbotron text-center">
+  <h1 style="font-size:50px;">Music Contents Platform</h1><br>
+    <p style="
+  margin-bottom: 20px;">Be rewarded with your voice.<br></p>
+</div>
+
+  <!-- logout 버튼 -->
   <form action="/logout">
-  <input type="submit" name='logout' value='logout'>
+  <input type="submit" name='logout' value='Logout'class="btn btn-default" style="float:right">
   </form>
 
   <!-- 현재 블록 수 및 total supply -->
-<p>현재 블록 수 {{ now_block_number }}</p>
-<p>1. total Supply : {{totalSupply}}</p>
+  <p>현재 블록 수 {{ now_block_number }}</p>
+  <p>1. total Supply : {{totalSupply}}</p>
 
-<!-- 유저 잔고 확인 -->
-<form method='POST'>
-<p>2. 유저의 잔고 확인</p>
-유저 명 : <input type="text" list="user_name" name='user_name_balance'>
-<datalist id = 'user_name'>
+  <!-- 유저 잔고 확인 -->
+  <form method='POST'>
+  <p>2. 유저의 잔고 확인</p>
+  유저 명 : <input type="text" list="user_name" name='user_name_balance'>
+  <div>
+  <datalist id = 'user_name'>
   {% for user in user_list %}
   <option value={{user}}></option>
   {% endfor %}
-</datalist>
-<input type="submit" value="확인">
-{{ show_token }}
-</form>
+  </datalist>
+  </div>
+  <input type="submit" value="확인">
+  {{ show_token }}
+  </form>
 
-<!-- 토큰 전송 -->
-<form method='POST'>
-<p>3. 토큰 전송 </p>
-유저 명 : <input type="text" list="user_name" name='user_name_transfer'>
-<datalist id = 'user_name'>
+  <!-- 토큰 전송 -->
+  <form method='POST'>
+  <p>3. 토큰 전송 </p>
+  유저 명 : <input type="text" list="user_name" name='user_name_transfer'>
+  <datalist id = 'user_name'>
   {% for user in user_list %}
   <option value={{user}}></option>
   {% endfor %}
-</datalist>
-<input type="text" name="amount">
-<input type="submit" value="확인">
-</form>
+  </datalist>
+  <input type="text" name="amount">
+  <input type="submit" value="확인">
+  </form>
 
+</div>
+{% block scripts %}
+  <script src="{{url_for('.static',filename='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js')}}"></script>
+      <script src="{{url_for('.static',filename='../js/bootstrap.min.js')}}"></script>
+{{ super()}}
+{% endblock %}
 </body>
 </html>

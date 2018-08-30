@@ -1,17 +1,17 @@
 import os
-from flask import Flask, request, redirect, url_for, send_from_directory
-from flask import render_template,flash,session
+from flask import Flask, request, redirect, url_for, send_from_directory,render_template,flash,session
 from werkzeug.utils import secure_filename
 from time import time
 from dapp_token import *
 import pymysql
-import pprint
+
 
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = set(['mp3'])
 
 app = Flask(__name__)
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = 'seongeun_secret'
 
@@ -22,20 +22,14 @@ eun = mytoken('MyBasicToken.sol','MyBasicToken')
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-'''
-def use_mysql(query,value):
-    conn = pymysql.connect(host='localhost', user='root',passwd='qwer1234',db='mydapp',charset='utf8')
-    cursor = conn.cursor()
-    query = query
-    value = value
-'''
+
 
 ## main page
 @app.route('/', methods=['GET','POST'])
 def index():
     conn = pymysql.connect(host='localhost', user='root',passwd='qwer1234',db='mydapp',charset='utf8')
     cursor = conn.cursor()
-    query = 'SELECT name,title,path,lyrics,created FROM data_table'
+    query = 'SELECT name,title,path,lyrics,created,loveit FROM data_table'
     cursor.execute(query)
     content_data = cursor.fetchall()
     cursor.close()
@@ -77,7 +71,7 @@ def index():
         return render_template('user.html',music_list=music_list,user_name = user_name,user_wallet=user_wallet,show_token=show_token,content_data=content_data,num_content=num_content)
     # login x
     else:
-        return render_template('index.html',music_list= music_list,content_data=content_data)
+        return render_template('index.html',music_list= music_list,content_data=content_data,num_content=num_content)
 
 
 # logout page

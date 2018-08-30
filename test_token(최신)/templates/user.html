@@ -1,45 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Music Contents Platform</title>
+  <link href="{{url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet">
 </head>
 <body>
-  <!-- login한 user name 출력 -->
-  <h1>{{user_name}} 님 안녕하세요</h1>
-
-  <!-- login한 user wallet 주소 출력 -->
-  <h2>지갑 주소 {{user_wallet}}</h2>
-
-  <!-- login한 user token 잔액 출력 -->
-  <h3>현재 잔고 {{show_token}}</h3>
-
-  <hr>
-    <!-- logout form -->
+  <div class="container">
+    <div class="jumbotron text-center">
+      <h1 style="font-size:50px;">Music Contents Platform</h1><br>
+      <p style="
+  margin-bottom: 20px;">Welcome!{{user_name}}님!<br> Be rewarded with your voice.<br></p>
+    </div>
+    <!--0.로그아웃 버튼-->
     <form action="/logout">
-    <input type="submit" name='logout' value='logout'>
+      <input type="submit" name="logout" value="Logout" class="btn btn-default" style="float:right">
+    </form><br><br>
+
+    <!--1.회원정보창 오른쪽-->
+    <ul class="list-group" style="float:right;">
+      <li class="list-group-item">{{user_name}}님 안녕하세요!</li>
+      <li class="list-group-item">Address : {{user_wallet}}</li>
+      <li class="list-group-item">Balance : {{show_token}}</li>
+    </ul>
+
+    <!-- 2.upload 버튼 -->
+    <form action="/upload">
+      <input type="submit" name='upload' value="upload" class="btn btn-default">
     </form>
 
-<!-- upload form -->
-    <form action="http://localhost:5000/upload">
-      <input type="submit" name='upload' value="upload">
-    </form>
-<hr>
 
-<table border=1>
-  <!-- lyrics를 클릭하게 되면 modal box 생성 후 가사 출력하게 하자-->
-  <caption>Music List</caption>
-  <thead><tr><th>Singer</th><th>title</th><th>song</th><th>lyrics</th><th>created</th><th>love it</th></tr></thead>
-  {% for i in range(num_content) %}
-  <tbody><tr><td>{{content_data[i][0]}}</td><td>{{content_data[i][1]}}</td><td><audio src={{content_data[i][2]}}type="file/mp3" controls></audio></td><td>{{content_data[i][3]}}</td><td>{{content_data[i][4]}}</td></tr></tbody>
-  {% endfor %}
-</table>
+<!-- 여기 부터 동일 -->
+    <br><br>
+    <br><br>
+    <br><br>
+    <hr>
+    <br><br>
 
+    <!-- 3. 업로드 출력화면 -->
 
-  <hr>
+    <div>
+      <table border=1>
+        <!-- lyrics를 클릭하게 되면 modal box 생성 후 가사 출력하게 하자-->
+        <caption>Music List</caption>
+        <thead>
+          <tr>
+            <th>Singer</th>
+            <th>title</th>
+            <th>song</th>
+            <th>lyrics</th>
+            <th>created</th>
+            <th>love it</th>
+            <th>좋아요!</th>
+          </tr>
+        </thead>
+        {% for i in range(num_content) %}
+        <tbody>
+          <tr>
+            <td>{{content_data[i][0]}}</td>
+            <td>{{content_data[i][1]}}</td>
+            <td><audio src={{content_data[i][2]}}type="file/mp3" controls></audio></td>
+            <td>{{content_data[i][3]}}</td>
+            <td>{{content_data[i][4]}}</td>
+            <td>{{content_data[i][5]}}</td>
+            <td><input type="submit" name='좋아요' value='좋아요'></td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+    </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
 
 </body>
+
 </html>
