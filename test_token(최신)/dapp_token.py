@@ -10,6 +10,7 @@ w3.personal.unlockAccount(w3.eth.accounts[0], "account1", 0)
 
 ## deploy_contract
 class mytoken:
+    # contract_file_name(solidty의 파일 명) , contract_name(solidity 내 Contract 명) 생성자  초기화
     def __init__(self,contract_file_name,contract_name):
         compiled_sol = compile_files([contract_file_name])
         contract_interface = compiled_sol['{}:{}'.format(contract_file_name,contract_name)]
@@ -23,17 +24,20 @@ class mytoken:
         contract_address = tx_recepit['contractAddress']
         self.contract_instance = contract(contract_address)
 
+    # 토큰 전송
     def send_token(self,sender,to,value):
         self.contract_instance.functions.transfer(to,value).transact({'from':sender})
         self.mining(2)
 
-
+    # user의 토큰 잔액 조회
     def show_token(self,addr):
         return self.contract_instance.call().balanceOf(addr)
 
+    # 토큰의 총 유통량
     def show_total_token(self):
         return self.contract_instance.call().totalSupply()
 
+    # 채굴
     def mining(self,thread):
         n_blockNumber = w3.eth.blockNumber
         while True:

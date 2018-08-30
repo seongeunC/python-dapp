@@ -5,8 +5,6 @@ from time import time
 from dapp_token import *
 import pymysql
 
-
-
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = set(['mp3'])
 
@@ -23,20 +21,24 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-
 ## main page
 @app.route('/', methods=['GET','POST'])
 def index():
+    # databse 접속
     conn = pymysql.connect(host='localhost', user='root',passwd='qwer1234',db='mydapp',charset='utf8')
     cursor = conn.cursor()
+    # SQL 문 작성 후 실행
     query = 'SELECT name,title,path,lyrics,created,loveit,id FROM data_table order by id desc'
     cursor.execute(query)
+    # 실행 후 출력문 변수 저장
     content_data = cursor.fetchall()
     num_content=len(content_data)
 
     # login o
     if session:
+        # login 시 세션을 통한 page 접속
         user_name = session['user']
+        # SQL 문 작성 후 실행 및 변수 저장
         query = 'SELECT wallet FROM user_table WHERE name = %s'
         value = (user_name)
         cursor.execute(query,value)
@@ -44,42 +46,49 @@ def index():
         user_wallet = user_wallet[0][0]
         show_token = eun.show_token(user_wallet)
         reward_list =[]
+
+        # 'favorNum' request 시 실행문
         if request.method == 'POST' and 'favorNum' in request.form:
             query = "update data_table set loveit = loveit + 1 where id = '" + request.form['favorNum'] + "'"
             cursor.execute(query)
             conn.commit()
+
         # admin login
         if user_name == 'admin':
+            # geth에 생성된 계정 목록 및 현재 블록 넘버
             user_list = w3.eth.accounts
             now_block_number = w3.eth.blockNumber
+
+            # 'user_name_balance' request 시 실행문
             if request.method == 'POST' and 'user_name_balance' in request.form:
                 addr_balance =  request.form['user_name_balance']
                 show_token = eun.show_token(addr_balance)
+
+            # 'user_name_transfer' request 시 실행문
             if request.method == 'POST' and 'user_name_transfer' in request.form and 'amount' in request.form:
                 addr_transfer = request.form['user_name_transfer']
                 amount_transfer = int(request.form['amount'])
+                # send_token()을 통한 토큰 전송
                 eun.send_token(w3.eth.accounts[0],addr_transfer,amount_transfer)
+
+            # 'reward' request 시 실행문  - > 각 콘텐츠 좋아요*1000 만큼 토큰 보상
             if request.method == 'POST' and 'reward' in request.form:
                 query = 'SELECT name FROM user_table'
                 cursor.execute(query)
                 data = cursor.fetchall()
                 num_data = len(data)
-
                 user_list =[]
                 for num in range(num_data):
                     user_name = data[num][0]
-
                     query = "SELECT loveit From data_table WHERE name=%s"
                     value = (user_name)
                     cursor.execute('set names utf8')
                     cursor.execute(query,value)
                     score = sum(int(x[0]) for x in cursor.fetchall())
-
                     query = "SELECT wallet From user_table WHERE name=%s"
                     value = (user_name)
                     cursor.execute(query,value)
                     user_wallet = cursor.fetchall()[0][0]
-                
                     amount = score * 1000
                     eun.send_token(w3.eth.accounts[0],user_wallet,amount)
                     if user_name == 'admin':
@@ -89,20 +98,16 @@ def index():
                 query = 'update data_table set loveit = 0'
                 cursor.execute(query)
                 conn.commit()
-
-
-
             totalSupply = eun.show_total_token()
             show_token = eun.show_token(w3.eth.accounts[0])
             return render_template('admin.html',totalSupply=totalSupply,user_list=user_list,show_token=show_token,now_block_number=now_block_number,user_wallet=user_wallet,reward_list=reward_list)
         return render_template('user.html',user_name = user_name,user_wallet=user_wallet,show_token=show_token,content_data=content_data,num_content=num_content)
+
     # login x
     else:
         return render_template('index.html',content_data=content_data,num_content=num_content)
-
     cursor.close()
     conn.close()
-
 
 # logout page
 @app.route('/logout')
@@ -110,10 +115,10 @@ def logout():
     session.pop('user',None)
     return redirect(url_for('index'))
 
-
 # login page
 @app.route('/login', methods=['GET','POST'])
 def login():
+    # login 정보 입력 시 DB에 저장된 정보 확인 후 session을 통한 login
     if request.method == 'POST':
         email = request.form['email']
         pw = request.form['pw']
@@ -133,20 +138,18 @@ def login():
                 return redirect(url_for('index'))
         else:
             return 0
-            #flash('Invalid input data detected!')
     return render_template('login.html')
 
 # sign-up page
 @app.route('/signup', methods=['GET','POST'])
 def sign_up():
+    # sign up에 필요한 정보 DB에 저장
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
         pw = request.form['pw']
-
         conn = pymysql.connect(host='localhost',user='root', passwd='qwer1234', db='mydapp',charset='utf8')
         cursor = conn.cursor()
-
         query = "SELECT 1 FROM user_table WHERE email='%s'"%(email)
         #value = (email)
         cursor.execute(query)
@@ -161,25 +164,20 @@ def sign_up():
             value = (name,email,pw,wallet_key)
             cursor.execute(query,value)
             data = cursor.fetchall()
-
             if not data:
                 conn.commit()
             else:
                 conn.rollback()
                 return print('Register Failed')
             return redirect(url_for('login'))
-
-
         cursor.close()
         conn.close()
     return render_template('signup.html')
 
-
-
-
 # upload page
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
+    # Upload 정보 입력 시
     if request.method == 'POST':
         if 'file' not in request.files:
             print('no file')
@@ -189,6 +187,7 @@ def upload_file():
             print('no filename')
             return redirect(request.url)
 
+        # 파일이 있을 경우
         if file and allowed_file(file.filename):
             name = session['user']
             filename = name+'_'+str(round(time.time()))+'_'+secure_filename(file.filename)
@@ -196,6 +195,8 @@ def upload_file():
             path = os.path.abspath(filename)
             title = request.form['title']
             lyrics = request.form['lyrics']
+
+            # DB에 각 정보 저장
             conn = pymysql.connect(host='localhost',user='root', passwd='qwer1234', db='mydapp',charset='utf8')
             cursor = conn.cursor()
             query = 'INSERT INTO data_table (name,title,lyrics,path,created) values(%s,%s,%s,%s,NOW())'
@@ -207,16 +208,7 @@ def upload_file():
             else:
                 conn.rollback()
             return redirect(url_for('index'))
-
     return render_template('upload.html')
-
-
-'''
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
-'''
-
 
 if __name__ == '__main__':
     app.run('localhost',5000, debug = True)
